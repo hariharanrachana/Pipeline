@@ -1,0 +1,31 @@
+---
+- hosts: jenkins-slave
+  become: true
+  tasks:
+  - name: update Ubuntu Repository
+    apt:
+      update_cache: yes
+      cache_valid_time: 3600
+  - name: install java
+    apt:
+      name: openjdk-11-jre
+      state: present
+  - name: download Maven package
+    get_url:
+      url: https://dlcdn.apache.org/maven/maven-3/3.8.8/binaries/apache-maven-3.8.8-bin.tar.gz
+      dest: /opt
+  - name: Extract Maven Packages
+    unarchive:
+       src: /opt/apache-maven-3.8.8-bin.tar.gz
+       dest: /opt
+       remote_src: yes
+  - name: create /home/ubuntu/jenkins folder 
+    file: 
+       path: /home/ubuntu/jenkins 
+       owner: ubuntu
+       group: ubuntu
+       mode: '0755'
+       stae: directory
+       
+
+      

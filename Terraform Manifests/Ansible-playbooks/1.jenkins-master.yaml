@@ -1,0 +1,27 @@
+---
+- hosts: jenkins-master
+  become: true
+  tasks:
+  - name: Add Jenkins key
+#ansible.builtin.apt.key
+    apt_key:
+      url: https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key
+      state: present
+  - name: Adding Jenkins Repo
+    apt_repository:
+      repo: 'deb https://pkg.jenkins.io/debian-stable binary/'
+      state: present
+  - name: install java
+    apt:
+      name: openjdk-11-jre
+      state: present
+  - name: install jenkins
+    apt:
+      name: jenkins
+      state: present
+  - name: Cat the initialadminPassword file
+    shell: cat /var/lib/jenkins/secrets/initialAdminPassword
+    register: initial_admin_password
+  - name: Display the initial_admin_password
+    debug:
+      var: initial_admin_password.stdout_lines
